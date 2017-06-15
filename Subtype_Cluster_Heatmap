@@ -12,15 +12,16 @@ if (!require("RColorBrewer")) {
   install.packages("RColorBrewer", dependencies = TRUE)
   library(RColorBrewer)
 }
+
 heatmap(test_scaled, col = rev(brewer.pal(9, "RdBu")))
-heatmap.2(test_scaled, col=rev(brewer.pal(9,"RdBu")))
+heatmap.2(test_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none")
 
 # Scaled within rows, no column clustering
 heatmap.2(test, col=rev(brewer.pal(9,"RdBu")), scale="column", Rowv = "NA")
 
 heatmap.2(test, col=rev(brewer.pal(9,"RdBu")), scale="row", Colv = "NA")
 
-
+###########################################################
 ## clustering
 d <- dist(test, method = "euclidean")
 fit <- hclust(d, method = "ward")
@@ -34,4 +35,37 @@ rownames(test) <- make.unique(as.character(test[,1]))
 
 colors_to_use <- test[,1]
 colors_to_use <- colors_to_use[order.dendrogram(fit)]
+
+
+
+
+## heatmap
+subtypesigmiR <- subtypesigmiR[,c(2:524)]
+
+
+subtypesigmiR_scaled <- scale(subtypesigmiR)
+
+if (!require("gplots")) {
+  install.packages("gplots", dependencies = TRUE)
+  library(gplots)
+}
+if (!require("RColorBrewer")) {
+  install.packages("RColorBrewer", dependencies = TRUE)
+  library(RColorBrewer)
+}
+
+##hiererachy cluster by sig miR and subtype
+
+heatmap.2(subtypesigmiR_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none", trace= "none", 
+          xlab ="Subtypes", main="GBM subtype specific miRNAs", labRow = F, 
+          cexCol= 0.4, margins = c(5,1),
+          distfun = function(x) dist(x,method = 'euclidean'),
+          hclustfun = function(x) hclust(x,method = 'ward'))
+
+png("GBM subtype.png", width = 50, height = 30, units='in', res = 600)
+dev.off()
+
+##supervised cluster 
+heatmap.2(subtypesigmiR_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none", 
+          trace= "none", Colv = "NA")
 
