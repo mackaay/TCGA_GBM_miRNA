@@ -40,10 +40,10 @@ colors_to_use <- colors_to_use[order.dendrogram(fit)]
 
 
 ## heatmap
-subtypesigmiR <- subtypesigmiR[,c(2:524)]
+subtypeSigmiR <- subtypeSigmiR[,c(2:524)]
 
 
-subtypesigmiR_scaled <- scale(subtypesigmiR)
+subtypeSigmiR_scaled <- scale(subtypeSigmiR)
 
 if (!require("gplots")) {
   install.packages("gplots", dependencies = TRUE)
@@ -56,16 +56,40 @@ if (!require("RColorBrewer")) {
 
 ##hiererachy cluster by sig miR and subtype
 
-heatmap.2(subtypesigmiR_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none", trace= "none", 
-          xlab ="Subtypes", main="GBM subtype specific miRNAs", labRow = F, 
-          cexCol= 0.4, margins = c(5,1),
+heatmap.2(subtypeSigmiR_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none", trace= "none", 
+          xlab ="Subtypes", main="GBM subtype specific miRNAs", labRow = F, labCol = F,
+          cexCol= 0.4, margins = c(2,1),
           distfun = function(x) dist(x,method = 'euclidean'),
-          hclustfun = function(x) hclust(x,method = 'ward'))
+          hclustfun = function(x) hclust(x,method = 'ward.D'),
+          ColSideColors = as.character(as.numeric(subtypesigmiR[1,])))
 
 png("GBM subtype.png", width = 50, height = 30, units='in', res = 600)
 dev.off()
 
 ##supervised cluster 
 heatmap.2(subtypesigmiR_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none", 
-          trace= "none", Colv = "NA")
+          trace= "none", 
+          xlab ="Subtypes", main="GBM subtype specific miRNAs", labRow = F, 
+          cexCol= 0.4, margins = c(5,1),
+          distfun = function(x) dist(x,method = 'euclidean'),
+          hclustfun = function(x) hclust(x,method = 'ward.D'), Colv = "NA")
+
+
+
+##PN-MES cluster
+PMsig <- PMsig[,c(2:295)]
+PMsig_1 <- PMsig[-c(1),]
+
+PMsig_scaled <- scale(PMsig_1)
+
+colcolour <- brewer.pal(2, "Set2")
+
+heatmap.2(PMsig_scaled, col=rev(brewer.pal(9,"RdBu")), density.info = "none", trace= "none", 
+          xlab ="Subtypes", main="Proneural vs Mesenchymal specific miRNAs", labRow = F, labCol = F,
+          cexCol= 0.4, margins = c(2,1),Rowv = "NA",
+          distfun = function(x) dist(x,method = 'euclidean'),
+          hclustfun = function(x) hclust(x,method = 'ward.D'),
+          ColSideColors = as.character(as.numeric(PMsig[1,])))
+
+legend(1,-1, legend = c("Proneural", "Mesenchymal"), col = c("black", "red"), lty = 1, lwd = 10)
 
