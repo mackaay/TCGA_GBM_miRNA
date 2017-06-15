@@ -34,3 +34,4 @@ rownames(test) <- make.unique(as.character(test[,1]))
 
 colors_to_use <- test[,1]
 colors_to_use <- colors_to_use[order.dendrogram(fit)]
+
