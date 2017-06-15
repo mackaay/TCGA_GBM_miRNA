@@ -1,0 +1,36 @@
+
+test <- test[,c(2:212)]
+test <- data.matrix(test)
+heatmap(test)
+test_scaled <- scale(test)
+
+if (!require("gplots")) {
+  install.packages("gplots", dependencies = TRUE)
+  library(gplots)
+}
+if (!require("RColorBrewer")) {
+  install.packages("RColorBrewer", dependencies = TRUE)
+  library(RColorBrewer)
+}
+heatmap(test_scaled, col = rev(brewer.pal(9, "RdBu")))
+heatmap.2(test_scaled, col=rev(brewer.pal(9,"RdBu")))
+
+# Scaled within rows, no column clustering
+heatmap.2(test, col=rev(brewer.pal(9,"RdBu")), scale="column", Rowv = "NA")
+
+heatmap.2(test, col=rev(brewer.pal(9,"RdBu")), scale="row", Colv = "NA")
+
+
+## clustering
+d <- dist(test, method = "euclidean")
+fit <- hclust(d, method = "ward")
+plot(fit, main = "Subtype miRNAs in TCGA", labels = test$ID)
+plot(fit, main = "Subtype miRNAs in TCGA", labels = test$ID, hang = -30)
+rect.hclust(fit, k=4, border="red")
+
+
+##Label and color leaf dendrogram in r
+rownames(test) <- make.unique(as.character(test[,1]))
+
+colors_to_use <- test[,1]
+colors_to_use <- colors_to_use[order.dendrogram(fit)]
